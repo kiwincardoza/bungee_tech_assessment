@@ -1,0 +1,39 @@
+/*
+SAMPLE DATA USED FOR TESTING THIS QUERY 
+
+INSERT INTO SALES VALUES
+('2021-01-31', 'USA', 'Retail', 'UUID1', 10000);
+INSERT INTO BUNGEE_TECH_PROJECT_DB.BUNGEE_TECH_PROJECT.SALES VALUES
+('2021-01-31', 'USA', 'Healthcare', 'UUID2', 2000), 
+('2021-01-31', 'Canada', 'Retail', 'UUID3', 30000),
+('2021-01-31', 'Canada', 'Hospitality', 'UUID4', 5000),
+('2021-02-27', 'USA', 'Retail', 'UUID5', 10000),
+('2021-02-27', 'USA', 'Healthcare', 'UUID6', 2000),
+('2021-02-27', 'Canada', 'Retail', 'UUID7', 30000),
+('2021-02-27', 'Canada', 'Hospitality', 'UUID8', 5000);
+
+INSERT INTO SALES VALUES
+('2021-01-31', 'Canada', 'Third', 'UUID9', 5000),
+('2021-01-31', 'Canada', 'Fourth', 'UUID10', 2000),
+('2021-01-31', 'USA', 'Third', 'UUID11', 5000),
+('2021-01-31', 'USA', 'Fourth', 'UUID12', 1000);
+
+*/
+WITH CURRENT_YEAR_DATA AS ( -- Filter for a specific year
+    SELECT * FROM SALES
+    WHERE YEAR(SALE_DATE) = '2021'
+),
+SALES_SUM_AGG AS (  -- Aggregate Sales by Country and Category
+    SELECT COUNTRY, CATEGORY, 
+    SUM(SALES) AS TOTAL_SALES
+    FROM CURRENT_YEAR_DATA
+    GROUP BY COUNTRY, CATEGORY
+), 
+ROWNUM_ASSIGN AS (  -- Asign Rank to get the top 3 categories (can have more than 3 Categories since DENSE_RANK is used)
+    SELECT COUNTRY, CATEGORY, TOTAL_SALES,
+    DENSE_RANK() OVER(PARTITION BY COUNTRY ORDER BY TOTAL_SALES DESC) AS RN1
+    FROM SALES_SUM_AGG
+)
+SELECT COUNTRY, CATEGORY, TOTAL_SALES
+FROM ROWNUM_ASSIGN 
+WHERE RN1<=3;

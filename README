@@ -1,0 +1,28 @@
+This Repository is for the assessment held by Bungee Tech.
+
+Below is the list of directories and their context.
+1. code - Contains main.py (Code file for Python assessment)
+2. logs - Contains main.log (Log file for code/main.py)
+3. queries - Contains the queries for all the questions in the assessment
+4. data - Contains MAIN_DE.csv (input CSV file) and q3_output.parquet (Python Q3 Output Parquet file)
+5. tests - Contains basic unit tests for the python file
+
+Below is the classification of the files in the 'queries' directory:
+1. sales_q1.sql - Query for the first question (for Sales table)
+2. sales_q2.sql - Query for the second question (for Sales table)
+3. employees_q1.sql - Query for the first question (for Employees/Salary/Department tables)
+4. employees_q2.sql - Query for the second question (for Employees/Salary/Department tables)
+5. employees_q3.sql - Query for the third question (for Employees/Salary/Department tables)
+
+ANSWER FOR THIRD QUESTION (Sales Table section)
+For better performance, the Sales table can be partitioned on COUNTRY and CATEGORY columns. 
+This is because the query uses Group by on these columns, and would be faster if the partitions need not be Shuffled.
+YEAR based on 'SALE_DATE' column can be also added as a PARTITION column, and if the base table has huge amount of data (spanning many years), all the partitions need not be scanned (Partition Pruning).
+YEAR based on 'SALE_DATE' column can be added as an Index for the SALES table, since the column is used in WHERE clause, and would help in scanning the records quickly for a specific year.
+
+
+TO RUN THIS, please follow the below steps:
+1. Python version - 3.9.12
+2. Create virtual environment (python -m venv venv)
+3. Install packages (pip install -r requirements.txt)
+4. Run python file (python code/main.py)
